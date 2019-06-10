@@ -7,3 +7,7 @@ First, [download the gender pay gap data from the Gender Pay Gap Service here](h
 Download the most recent *full* year of data.
 
 Then open the data in Excel or Google Sheets.
+
+## Using pivot tables in Google Sheets
+
+[I've written a guide to using pivot tables with the gender pay gap data here](https://github.com/paulbradshaw/MED7373-Data-Journalism/blob/master/1basics/gsheetspivot.md).
