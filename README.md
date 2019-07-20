@@ -72,3 +72,9 @@ Once you do have an effective filter, you can sort it as above, or perform other
 ## Using pivot tables in Google Sheets
 
 [I've written a guide to using pivot tables with the gender pay gap data here](https://github.com/paulbradshaw/MED7373-Data-Journalism/blob/master/1basics/gsheetspivot.md).
+
+## Other data
+
+The ONS [publishes data on the gender pay gap](https://www.ons.gov.uk/employmentandlabourmarket/peopleinwork/earningsandworkinghours/datasets/annualsurveyofhoursandearningsashegenderpaygaptables), too, compiled from the Annual Survey of Hours and Earnings. It includes "Annual gender pay gap estimates for UK employees by age, occupation, industry, full-time and part-time, region and other geographies, and public and private sector."
+
+A copy of the 2018 data is in this repo inside the data folder.
