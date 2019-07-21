@@ -1,6 +1,6 @@
 # Analysing the gender pay gap
 
-This notebook uses gender pay gap data to demonstrate a number of techniques in R, specifically:
+[This notebook](https://github.com/paulbradshaw/genderpaygap/blob/master/r/analysinggenderpaygap.Rmd) uses gender pay gap data to demonstrate a number of techniques in R, specifically:
 
 * Importing live data directly from the web
 * Understanding different object types in R (character/strings, factors, numeric, data frames)
@@ -25,7 +25,7 @@ This has two steps:
 
 *Note: variable names in R never begin with numbers, so we put the year at the end of the variable name to avoid this*
 
-```{r fetch csv}
+```{r}
 #Store the URL
 url1920 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2019"
 #Read a CSV from that URL, and store in a variable called 'csv1920'
@@ -53,7 +53,9 @@ We don't actually want those columns to be factors (factors are like categories 
 To correct this, we import again, this time *specifying* that we don't want to treat strings as factors:
 
 ```{r}
-data1920 <- read.csv(url1920, stringsAsFactors = F)
+#Read in the CSV again, this time adding an instruction not to default to factors
+data1920 <- read.csv(url1920, stringsAsFactors = FALSE)
+#Check the object has numeric and character fields now
 str(data1920)
 ```
 
@@ -62,6 +64,7 @@ str(data1920)
 We can also use the `summary()` function to get a different overview: it will show us the smallest and largest values, the mean and median averages, and quartiles for any numerical columns in the data.
 
 ```{r}
+#Get summary statistics for the specified data frame
 summary(data1920)
 ```
 
@@ -85,5 +88,35 @@ table(data1920$EmployerSize)
 The `table()` function isn't so helpful for columns where there are lots of different values:
 
 ```{r}
+#Show a table of values in the SicCodes column
 table(data1920$SicCodes)
 ```
+
+## What we've learned so far
+
+We will use another notebook to move onto analysing the data. Before then, let's summarise some of the key points:
+
+* Create a variable to hold information in R using the `<-` operator
+* You can import a CSV directly from a URL using the `read.csv()` function, and assign it to a variable. This will be a data frame.
+* Remember to add `, stringsAsFactors = FALSE` inside that function, otherwise character fields will be converted to factors (which we don't want)
+* Use `str()` or `typeof()` to find out what types of data are inside a data frame, or what type of variable something is
+* Use `summary()` to get summary statistics for a data frame - especially useful for numeric fields (columns)
+* Use `table()` to get a summary of a category column - you will need to name the column by adding `$` to the data frame name, and then the name of the column
+
+## Next steps
+
+Now, pick a story you'd like to pursue in this data. 
+
+Some things to consider:
+
+* Numerical columns allow us to look for extremes (outliers) and patterns (averages)
+* Categories allow us to look at patterns or differences between categories
+* Addresses allow us to find geographical patterns, or focus on a particular area
+* Dates allow us to find patterns in time, or focus on a particular period
+* Codes allow us to pull in information from elsewhere, such as other categories which we can filter on
+* Names can be indicators of other things. Have a think what...
+* Text can be split, counted, measured, searched and matched.
+
+And of course, remember outside of the data there are always considerations about topicality and audience: what about this data might be *relevant to your audience*, or *more relevant right now* (in terms of the news agenda)?
+
+Now look at the other notebooks in this repo for examples of some of the techniques you can use to get the story you've thought of...
