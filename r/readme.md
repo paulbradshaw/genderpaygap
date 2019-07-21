@@ -1,6 +1,6 @@
 # Analysing the gender pay gap
 
-[This notebook](https://github.com/paulbradshaw/genderpaygap/blob/master/r/analysinggenderpaygap.Rmd) uses gender pay gap data to demonstrate a number of techniques in R, specifically:
+[This notebook](https://github.com/paulbradshaw/genderpaygap/blob/master/r/downloadgenderpaygap.Rmd) uses gender pay gap data to demonstrate a number of techniques in R, specifically:
 
 * Importing live data directly from the web
 * Understanding different object types in R (character/strings, factors, numeric, data frames)
@@ -91,6 +91,52 @@ The `table()` function isn't so helpful for columns where there are lots of diff
 #Show a table of values in the SicCodes column
 table(data1920$SicCodes)
 ```
+
+## Combining the data
+
+Another thing that R is particularly useful for is combining datasets. In this case, we've downloaded the latest data but there are other years as well. If we want to make a year-by-year comparison we'll need to combine the data.
+
+First we need to get the other datasets into R, which we do with `read.csv()` again, remembering to set `stringsAsFactors` to `FALSE`:
+
+```{r}
+#Store the URLs of the 2 datasets
+url1819 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2018"
+url1718 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2017"
+#Read the CSV from each URL into a new variable
+data1819 <- read.csv(url1819, stringsAsFactors = FALSE)
+data1718 <- read.csv(url1718, stringsAsFactors = FALSE)
+```
+
+You should now see the new variables in your RStudio environment (upper right corner). 
+
+This is a good opportunity to point out something: in data frames rows are called 'observations' and columns are called 'variables'. The data for 2017-18, then, has 10,559 rows (observations) and 25 columns (variables).
+
+If you want to combine data frames from different years (or other timeframes) in R, you need to make sure they have the same number of columns (variables) - otherwise you will get an error.
+
+In this case you should see that all three data frames have 25 columns, so that's OK. 
+
+Now, to merge data we can use the `rbind()` function (think of it as 'binding rows' together), like so:
+
+```{r}
+#Combine the data frames for all 3 years
+dataallyears <- rbind(data1718, data1819, data1920)
+```
+
+The `rbind(data1718, data1819, data1920)` part specifies which data frames we want to combine with `rbind()` (each one separated by a comma), and we *assign* the results of that to a new variable: `dataallyears`.
+
+You should now see that new variable in the environment, and notice that it has a number of rows (observations) equal to the other 3 added up.
+
+You can now get a summary of this new combined data:
+
+```{r}
+#summarise the new data frame
+summary(dataallyears)
+```
+
+
+By the way, there is *another* way of combining data, when you want to bring in *extra* data on a particular *aspect* of your existing data. 
+
+For example, if you wanted to combine one dataset on *crimes* by police force, with a second dataset giving the *populations* of each police force. We will cover this in another notebook. 
 
 ## What we've learned so far
 
