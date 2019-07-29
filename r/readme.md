@@ -28,7 +28,7 @@ This has two steps:
 ```{r}
 #Store the URL
 url1920 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2019"
-#Read a CSV from that URL, and store in a variable called 'csv1920'
+#Read a CSV from that URL, and store in a variable called 'data1920'
 data1920 <- read.csv(url1920)
 ```
 
@@ -42,7 +42,7 @@ typeof(url1920)
 The `typeof()` function is best for small objects. The `str()` function gives more information and is best for data frames where you want to see a bit more:
 
 ```{r}
-#Find out about the columns in csv1920
+#Find out about the columns in data1920
 str(data1920)
 ```
 
