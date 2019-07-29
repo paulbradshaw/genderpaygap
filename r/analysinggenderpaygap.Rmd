@@ -1,11 +1,49 @@
 ---
-title: "Analysing the gender pay gap"
+title: "Analysing the gender pay gap with dplyr"
 author: "Paul Bradshaw"
 date: "21/07/2019"
 output: html_document
 ---
 
-# Analysing the gender pay gap
+# Analysing the gender pay gap with dplyr
 
-In a separate notebook we have downloaded gender pay gap files from https://gender-pay-gap.service.gov.uk/viewing/download
+This notebook details some processes for doing data analysis in R using the package `dplyr`.
+
+## Get the data first
+
+In a separate notebook we have downloaded gender pay gap files from https://gender-pay-gap.service.gov.uk/viewing/download. If you need to recreate those files, run the code in the notebook 'downloadgenderpaygap', or just run the line below to load the .rds file that was saved at the end:
+
+```{r load rds}
+#Import data exported in previous notebook, store in variable 'dataallyears'
+dataallyears <- readRDS("dataallyears.rds")
+```
+
+## Importing the `dplyr` package to analyse the data 
+
+There is some analysis that we can do with *base R* (that means R's basic built-in functions), including functions such as `mean()` and `median()`...
+
+```{r check averages}
+#Show the mean average of the mean % differences
+mean(data1920$DiffMeanHourlyPercent)
+#Show the median average of the mean % differences
+median(data1920$DiffMeanHourlyPercent)
+```
+
+...but this is a good excuse to install a package for analysing data:
+
+```{r install dplyr, eval=FALSE, include=FALSE}
+#Install dplyr - in RStudio it is probably already installed so you don't really need to run this, but it's worth doing anyway this time
+install.packages("dplyr")
+```
+
+Check your console when you run this code (the window in the lower left corner, below the notebook) as it may ask you `Do you want to install from sources the packages which need compilation?`
+
+You can [read more about this message here](https://community.rstudio.com/t/meaning-of-common-message-when-install-a-package-there-are-binary-versions-available-but-the-source-versions-are-later/2431), but the short version is "If you say no, you won't get the most recent version. But this might be just fine, unless you were specifically installing because of an update."
+
+Now we need to *add* the package we've just installed to our library of options, using `library()`:
+
+```{r activate dplyr}
+#Activate dplyr now that it's installed
+library(dplyr)
+```
 

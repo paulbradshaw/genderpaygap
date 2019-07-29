@@ -32,24 +32,46 @@ This has two steps:
 
 *Note: variable names in R never begin with numbers, so we put the year at the end of the variable name to avoid this*
 
-```{r}
+```{r store and fetch url}
 #Store the URL
 url1920 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2019"
-#Read a CSV from that URL, and store in a variable called 'csv1920'
+#Read a CSV from that URL, and store in a variable called 'data1920'
 data1920 <- read.csv(url1920)
 ```
 
-You should now see two variables in the *Global Environment* area in the upper right corner of RStudio. We can use `typeof()` or `str()` to find out more about them:
+You should now see two variables in the *Global Environment* area in the upper right corner of RStudio. 
 
-```{r}
+## Getting an overview of the data
+
+We can take a look at the first few rows of a data frame by using `head()` like so:
+
+```{r show head}
+#Show the first 6 rows
+head(data1920)
+```
+
+Likewise `tail()` will show you the last few:
+
+```{r show tail}
+#Show the last 6 rows
+tail(data1920)
+```
+
+Unfortunately, with 25 columns you have to click the 'right' arrow in the upper right corner of the preview to scroll right through the different columns.
+
+We can use `typeof()` or `str()` to find out more about them:
+
+```{r use typeof}
 #Find out what type of variable url1920 is
 typeof(url1920)
 ```
 
-The `typeof()` function is best for small objects. The `str()` function gives more information and is best for data frames where you want to see a bit more:
+The `typeof()` function is best for small objects (like the string above) or parts of data frames such as an individual column. 
 
-```{r}
-#Find out about the columns in csv1920
+The `str()` function gives more information and is better for data frames where you want to see a bit more detail:
+
+```{r use str}
+#Find out about the columns in data1920
 str(data1920)
 ```
 
@@ -59,7 +81,7 @@ We don't actually want those columns to be factors (factors are like categories 
 
 To correct this, we import again, this time *specifying* that we don't want to treat strings as factors:
 
-```{r}
+```{r read with stringsasfactors false}
 #Read in the CSV again, this time adding an instruction not to default to factors
 data1920 <- read.csv(url1920, stringsAsFactors = FALSE)
 #Check the object has numeric and character fields now
@@ -70,7 +92,7 @@ str(data1920)
 
 We can also use the `summary()` function to get a different overview: it will show us the smallest and largest values, the mean and median averages, and quartiles for any numerical columns in the data.
 
-```{r}
+```{r summary}
 #Get summary statistics for the specified data frame
 summary(data1920)
 ```
@@ -87,14 +109,14 @@ In this case you need to specify the table *and* the column within that. This is
 
 RStudio will suggest columns as soon as you type the `$`, so you don't need to remember the name, just select it from the list.
 
-```{r}
+```{r table}
 #Show a table of values in the EmployerSize column
 table(data1920$EmployerSize)
 ```
 
 The `table()` function isn't so helpful for columns where there are lots of different values:
 
-```{r}
+```{r table sic codes}
 #Show a table of values in the SicCodes column
 table(data1920$SicCodes)
 ```
@@ -105,7 +127,7 @@ Another thing that R is particularly useful for is combining datasets. In this c
 
 First we need to get the other datasets into R, which we do with `read.csv()` again, remembering to set `stringsAsFactors` to `FALSE`:
 
-```{r}
+```{r read in other 2 csvs}
 #Store the URLs of the 2 datasets
 url1819 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2018"
 url1718 <- "https://gender-pay-gap.service.gov.uk/viewing/download-data/2017"
@@ -124,7 +146,7 @@ In this case you should see that all three data frames have 25 columns, so that'
 
 Now, to merge data we can use the `rbind()` function (think of it as 'binding rows' together), like so:
 
-```{r}
+```{r combine}
 #Combine the data frames for all 3 years
 dataallyears <- rbind(data1718, data1819, data1920)
 ```
@@ -135,7 +157,7 @@ You should now see that new variable in the environment, and notice that it has 
 
 You can now get a summary of this new combined data:
 
-```{r}
+```{r summarise combined df}
 #summarise the new data frame
 summary(dataallyears)
 ```
@@ -144,6 +166,99 @@ summary(dataallyears)
 By the way, there is *another* way of combining data, when you want to bring in *extra* data on a particular *aspect* of your existing data. 
 
 For example, if you wanted to combine one dataset on *crimes* by police force, with a second dataset giving the *populations* of each police force. We will cover this in another notebook. 
+
+## Adding new data (to differentiate the years)
+
+Before we combined the 3 years, we should have thought about how we were going to differentiate the figures from the different datasets in any year-on-year comparison. In other words, does the data contain a 'year' or similar column?
+
+Let's look at the column names again, using the `colnames()` function:
+
+```{r colnames}
+#Show column names
+colnames(data1920)
+```
+
+There doesn't appear to be any 'financial year' column - but there are a couple which we might use as proxies: `DateSubmitted` and `DueDate`.
+
+Let's use `summary()` again - this time on just one column - to get an overview:
+
+```{r summarise column}
+summary(data1718$DueDate)
+```
+
+That doesn't tell us much. What about `min()` and `max()`?
+
+```{r min and max}
+min(data1718$DueDate)
+max(data1718$DueDate)
+```
+
+At first glance this looks useful. It *appears* to tell us that the dates in that column run from the 5th April to the 31st March 2018. 
+
+But do you see any problem with this?
+
+I will use `table()` too, just to buy some time while you are thinking...
+
+```{r table duedate}
+table(data1718$DueDate)
+```
+
+Well, the `character` type should have given you a clue: we are not dealing with numbers (or dates) here - just text. And when you use `min()` with text, it gives you the first item *alphabetically*. 
+
+Secondly, we should realise that the 5th April 2018 (the "minimum" date) comes *after* March 31st (the "maximum"), so the functions are not giving us a result that we expect, at least if we are assuming dates are being treated *as* dates.
+
+And the reason, of course, is that it isn't: it's treating them as text.
+
+We will deal with dates in a separate notebook, but for now we need to solve the immediate problem, which is making sure that we can distinguish data from each financial year. 
+
+To do that, we can **add a column** specifying the financial year to each year's data frame *before* they are combined, and then re-run the line combining them.
+
+Here's how to add a column with a single value:
+
+```{r add new column}
+#Add a new column called 'yearending' full of the number 2018
+data1718$yearending <- 2018
+#Repeat for the other two datasets
+data1819$yearending <- 2019
+data1920$yearending <- 2020
+```
+
+A few things to note here: 
+
+* If you assign a value to a column that doesn't exist, R simply creates that column.
+* Although it's just one number, R will repeat that number for as many rows as it needs to in order to make it the same length as the other columns
+* We need to make sure that the columns have the same name in each data frame, or they won't combine properly
+* We need to make sure all data frames have this one new column added so that they still have the same number of columns
+* I've chosen to use a *number* here (without quotation marks) rather than `"2017/18"` (which would have to be put in quotation marks, and therefore be a string). There are a few reasons for this, but basically it boils down to the fact that it means I can perform calculations like the number of years between datasets, etc.
+
+Now we can combine the data frames again:
+
+```{r combine again}
+#Combine the data frames for all 3 years
+dataallyears <- rbind(data1718, data1819, data1920)
+```
+
+
+## Exporting the data 
+
+We could decide at this point to do all the remaining analysis in Excel or other spreadsheet software, in which case we would need to export it as a CSV using the `write.csv()` function.
+
+```{r export csv}
+write.csv(dataallyears, "gpgcombined.csv")
+```
+
+But the resulting spreadsheet has over half a million cells - it will be pretty slow to work with. 
+
+To carry on working with the data in R, it's a good idea to save it as an .rds file like so:
+
+```{r save rds}
+saveRDS(dataallyears, file = "dataallyears.rds")
+```
+
+Note that the resulting file is much smaller than the CSV of the same data. This is another advantage of working in R.
+
+When you close your project, you'll be asked if you want to save the 'workspace image'. It's better not to, as this will make the R project file larger and full of 'work in progress' objects that we no longer need. Instead, you can just load the objects that you will need again, which you've exported with the `readRDS()` function (and you can always re-run the code in the notebook to generate them anyway).
+
 
 ## What we've learned so far
 
@@ -168,7 +283,7 @@ Some things to consider:
 * Dates allow us to find patterns in time, or focus on a particular period
 * Codes allow us to pull in information from elsewhere, such as other categories which we can filter on
 * Names can be indicators of other things. Have a think what...
-* Text can be split, counted, measured, searched and matched.
+* Text can be split (names, addresses, postcodes), counted (the most frequent), measured (the longest or shortest), searched (how many mentions of a word) and matched (bringing in extra details about people, organisations, postcodes etc).
 
 And of course, remember outside of the data there are always considerations about topicality and audience: what about this data might be *relevant to your audience*, or *more relevant right now* (in terms of the news agenda)?
 
