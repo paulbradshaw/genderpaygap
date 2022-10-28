@@ -1,10 +1,3 @@
----
-title: "Analysing the gender pay gap: time and dates"
-author: "Paul Bradshaw"
-date: "21/07/2019"
-output: html_document
----
-
 # Analysing the gender pay gap: time and dates
 
 Let's say you wanted to work out how close to the deadline companies tended to wait before submitting - or filter to the ones who were earliest or latest. To do that you need to be able to work with times and dates. 
